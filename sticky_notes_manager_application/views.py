@@ -1,4 +1,4 @@
-from django.shortcuts import render
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,14 +6,16 @@ from django.contrib import messages
 from .forms import UserRegisterForm, UserLoginForm, NoteForm
 from .models import Note, User
 
+
 def is_admin(user):
     return user.is_admin
+
 
 def register(request):
     if User.objects.filter(is_admin=True).exists() and not request.user.is_admin:
         messages.error(request, 'Admin account already exists.')
         return redirect('login')
-    
+
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -26,6 +28,7 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'notes/register.html', {'form': form})
+
 
 def user_login(request):
     if request.method == "POST":
@@ -45,10 +48,12 @@ def user_login(request):
         form = UserLoginForm()
     return render(request, 'notes/login.html', {'form': form})
 
+
 @login_required
 def user_logout(request):
     logout(request)
     return redirect('login')
+
 
 @login_required
 def dashboard(request):
@@ -59,6 +64,7 @@ def dashboard(request):
     else:
         notes = Note.objects.filter(created_by=request.user)
         return render(request, 'notes/user_dashboard.html', {'notes': notes})
+
 
 @login_required
 @user_passes_test(is_admin)
@@ -75,6 +81,7 @@ def create_admin(request):
         form = UserRegisterForm()
     return render(request, 'notes/create_admin.html', {'form': form})
 
+
 @login_required
 def note_list(request):
     if request.user.is_admin:
@@ -83,10 +90,12 @@ def note_list(request):
         notes = Note.objects.filter(created_by=request.user)
     return render(request, 'notes/note_list.html', {'notes': notes})
 
+
 @login_required
 def note_detail(request, pk):
     note = get_object_or_404(Note, pk=pk)
     return render(request, 'notes/note_detail.html', {'note': note})
+
 
 @login_required
 def note_new(request):
@@ -101,6 +110,7 @@ def note_new(request):
         form = NoteForm()
     return render(request, 'notes/note_edit.html', {'form': form})
 
+
 @login_required
 def note_edit(request, pk):
     note = get_object_or_404(Note, pk=pk)
@@ -112,6 +122,7 @@ def note_edit(request, pk):
     else:
         form = NoteForm(instance=note)
     return render(request, 'notes/note_edit.html', {'form': form})
+
 
 @login_required
 @user_passes_test(is_admin)

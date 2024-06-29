@@ -20,5 +20,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('sticky_notes_manager_application.urls')),
+    path('sticky_notes_manager_application.urls/', include('sticky_notes_manager_application.urls')),
 ]
